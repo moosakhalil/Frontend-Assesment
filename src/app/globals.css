@@ -1,0 +1,283 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens sampled from the Figma "Inbox Dashboard" frames.
+ * Components reference these only — no raw hex values in JSX.
+ */
+@theme {
+  /* Type */
+  /* Stands in for the file's SF Compact — see layout.tsx. */
+  --font-sans:
+    "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+
+  /* The BOXpad wordmark is Poppins 700 in the frame — nothing else uses it. */
+  --font-display: "Poppins", var(--font-sans);
+
+  /* The extraction frame heading — Roboto 700 in the Figma file. */
+  --font-loading: "Roboto", var(--font-sans);
+
+  /* Brand */
+  --color-brand: #007aec;
+  --color-brand-hover: #0069cc;
+  --color-brand-soft: #e6f2fd;
+
+  /* Surfaces */
+  --color-canvas: #eff0eb;
+  --color-surface: #ffffff;
+  /* The rail card is opaque white; the list beside it is 70% white. */
+  --color-rail: #ffffff;
+  /* A 418x610 frame sits behind the rail + list pair, so the translucent
+     list composites over this rather than over the canvas. */
+  --color-rail-backing: #fafaf8;
+  --color-hover: #eff2f2;
+  /* Soft icon-button chip in the thread header. */
+  --color-icon-chip: #ebebeb;
+  /* Placeholder bars in the loading frame. */
+  --color-skeleton: #edeeea;
+
+  /* Lines */
+  --color-line: #d8dee4;
+  --color-line-strong: #c4ccd4;
+  /* Divider between the rail and the list — #0000003D from the frame. */
+  --color-line-card: rgb(0 0 0 / 0.24);
+
+  /* Text */
+  --color-ink: #000000;
+  /* Rail entries and their counts sit a touch lighter than body text. */
+  --color-ink-soft: #222222;
+  --color-ink-muted: #909090;
+  --color-ink-subtle: #adadad;
+  /* Rail list glyphs; the top-bar nav glyphs use their own grey. */
+  --color-icon: #afbfc0;
+  --color-icon-nav: #90909b;
+
+  /* Message bubbles */
+  --color-bubble-in: #eff2f2;
+  --color-bubble-out: #ede3fd;
+  --color-tick: #72b5f4;
+
+  /* Notes */
+  --color-note: #f5e096;
+  --color-note-soft: #f9ebbc;
+  --color-note-ink: #6b5713;
+
+  /* Channel brand colours — the only non-design-system hues in the file. */
+  --color-instagram: #e1306c;
+
+  /* Contact label chips */
+  --color-chip: #e5f1fc;
+  --color-chip-line: #bfdefb;
+  --color-chip-ink: #56a7f2;
+
+  /*
+   * Type scale, lifted from the frame and divided by the 0.75 export scale.
+   * SF Compact's variable weights map 457->400, 556->500, 656->600, 790->700.
+   */
+  --text-micro: 9.36px; /* 7.02  — bubble timestamps */
+  --text-micro--line-height: 11.16px;
+  --text-time: 10.29px; /* 7.72  — row timestamps */
+  --text-time--line-height: 12.28px;
+  --text-meta: 11.23px; /* 8.42  — counts, label chips, date divider */
+  --text-meta--line-height: 13.4px;
+  --text-body: 13.09px; /* 9.82  — the dominant UI size */
+  --text-body--line-height: 15.63px;
+  /* Named "scope", not "rail": `text-rail` would collide with --color-rail
+     and Tailwind resolves text-* as a colour first. */
+  --text-scope: 14.31px; /* 10.73 — My Inbox / All / Unassigned */
+  --text-scope--line-height: 17.07px;
+  --text-title: 16.84px; /* 12.63 — column headings, wordmark */
+  --text-title--line-height: 20.09px;
+
+  /* Radii */
+  --radius-card: 0.75rem;
+  --radius-bubble: 0.625rem;
+  /* 5.61 in the frame — chips, rows, buttons. The most-used radius by far. */
+  --radius-chip: 0.4675rem;
+
+  /*
+   * The dashboard shell. Figma hands these over from a frame exported at 75%
+   * (168.42, 609.82, 11.23, 0.7 …); the values below are those measurements
+   * at 1:1, which is where they land on whole pixels.
+   */
+  --radius-shell: 11.23px; /* 8.42 / .75 */
+  --radius-shell-lg: 14.97px; /* 11.23 / .75 — top bar and the rail's outer edge */
+  --shadow-card: 0 4px 24px 0 rgb(0 0 0 / 0.12); /* #0000001F */
+  /* Rail: the selected scope pill, and the selected team/user row. */
+  --shadow-scope: 0 3.74px 11.23px 0 rgb(0 0 0 / 0.06);
+  --shadow-row: 0 1.87px 11.23px 0 #e7ebec;
+  --spacing-gutter: 0.5rem; /* 5.61 / .75, rounded to the 8px grid */
+
+  /* Column widths, measured off the Figma frame */
+  --spacing-rail: 14rem; /* 168.42 / .75 */
+  --spacing-list: 20.75rem; /* 249.12 / .75 */
+  --spacing-details: 24.5rem; /* 294.04 / .75 */
+
+}
+
+/*
+ * Referenced from inline styles rather than utility classes, so they live
+ * outside @theme — Tailwind v4 drops theme variables no utility uses.
+ */
+:root {
+  /* Avatar rotation, sampled from the frame */
+  --color-av-1: #a592f5;
+  --color-av-2: #fbd966;
+  --color-av-3: #99bbf6;
+  --color-av-4: #ef9d7e;
+  --color-av-5: #4fb6ec;
+  --color-av-6: #5fd669;
+  /* The signed-in user's chip in the top bar */
+  --color-av-me: #fe3265;
+
+  /* "Extracting information" overlay */
+  --color-deep: #0c0c0c;
+  --color-deep-blue: #0a2f7a;
+  --color-glow: #1160e0;
+
+  /* Overlay detail: honeycomb outlines, orbit rings, the sweeping arc */
+  --color-hex-fill: rgba(6, 12, 30, 0.55);
+  --color-hex-line: rgba(150, 200, 255, 0.55);
+  --color-arc: #7cc4ff;
+
+  /* Highlight applied to the honeycomb that is handing its data over */
+  --hex-grad-from: #ff2fd0;
+  --hex-grad-mid: #7a4bff;
+  --hex-grad-to: #1e7dff;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Thin scrollbars keep column density close to the Figma frames */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+.scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background-color: var(--color-line-strong);
+  border-radius: 999px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/*
+ * Loading choreography — the "Extracting Information" frame.
+ * Ring orbits, honeycomb outlines and the per-section reveal.
+ */
+
+/* Background rings: a bright arc travelling round a circular track. */
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* The rings "shine" — they brighten and swell slightly on each pass. */
+@keyframes ring-breathe {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.03);
+  }
+}
+
+/* Honeycomb outline: a dash segment that keeps travelling round the edge. */
+@keyframes dash-drift {
+  to {
+    stroke-dashoffset: -293;
+  }
+}
+
+/* Selected honeycomb: a soft halo that pulses under the gradient outline. */
+@keyframes hex-halo {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.12);
+  }
+}
+
+/* Section reveal once its icon has landed. */
+@keyframes populate-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* Avatar pill at the centre of the ring. */
+@keyframes pill-bob {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
