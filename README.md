@@ -49,8 +49,8 @@ an error. Raw shapes live in `dto.ts` and are mapped to domain types in `mappers
 component touches an API shape directly.
 
 **Optional fixture.** `npm run mock` serves the same response shapes with the exact copy from the
-frames (Olivia Mckinsey, the Fit4Life thread) — useful for judging design parity, and what the
-screenshots below were captured against. Behaviour is identical either way; only the text differs.
+frames (Olivia Mckinsey, the Fit4Life thread) — useful for judging design parity against the
+original. Behaviour is identical either way; only the message text differs.
 
 ```bash
 npm run mock                                                  # terminal 1
@@ -75,24 +75,28 @@ under a top bar.
 **Loading** — the dark "Extracting Information…" frame over first load, with per-column skeletons
 underneath. Full choreography in [Figma comment coverage](#figma-comment-coverage) below.
 
-**Errors and empty states** — failures show the HTTP status inline with a working *Try again*;
+![Loading overlay](docs/loading-overlay.png)
+
+**Errors and empty states** — a failed fetch shows the reason inline with a working *Try again*;
 no-results and no-selection have their own states.
 
+<p>
+  <img src="docs/error-state.png" width="420" alt="Error state — API unreachable" />
+  <img src="docs/empty-state.png" width="420" alt="Empty state — no search results" />
+</p>
+
 **Responsive** — below `md` the app becomes a drill-down: the list fills the screen, tapping a row
-opens the thread with a back button, and the rail and details panel become drawers.
+opens the thread with a back button, and the rail and details panel become drawers with a scrim.
+
+<p>
+  <img src="docs/mobile-list.png" width="215" alt="Mobile list" />
+  <img src="docs/mobile-thread.png" width="215" alt="Mobile thread" />
+  <img src="docs/mobile-drawer.png" width="215" alt="Mobile rail drawer" />
+</p>
 
 **Accessibility** — semantic landmarks, labels on every icon-only button, `aria-expanded` /
 `aria-busy` / `aria-current`, visible focus rings, and a `prefers-reduced-motion` guard that skips
 the animation rather than hiding it.
-
-<p>
-  <img src="docs/loading-overlay.png" width="420" alt="Loading overlay" />
-  <img src="docs/error-state.png" width="420" alt="Error state" />
-</p>
-<p>
-  <img src="docs/mobile-list.png" width="220" alt="Mobile list" />
-  <img src="docs/mobile-thread.png" width="220" alt="Mobile thread" />
-</p>
 
 ---
 
